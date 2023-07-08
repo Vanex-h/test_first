@@ -3,23 +3,28 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const signupController = async (req, res) => {
-  // object destructuing
-  const { username, email, password } = req.body;
-
-  // 1. Hashing password  - bcrypt
-  const hash = await bcrypt.hash(password, 10);
-  console.log(hash);
-
-  // 2. saving the user
-  const user = new User({
-    username: username,
-    password: hash,
-    email: email,
-  });
-
-  await user.save();
-
-  return res.json({ message: "User saved successfully" });
+  try {
+    
+    // object destructuing
+    const { username, email, password } = req.body;
+    
+    // 1. Hashing password  - bcrypt
+    const hash = await bcrypt.hash(password, 10);
+    console.log(hash);
+    
+    // 2. saving the user
+    const user = new User({
+      username: username,
+      password: hash,
+      email: email,
+    });
+    
+    await user.save();
+    
+    return res.status(200).json({ message: "User saved successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const getAllUsers = async (req, res) => {
